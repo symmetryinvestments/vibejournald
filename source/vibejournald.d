@@ -16,8 +16,8 @@ class JournaldLogger : Logger {
 		this.line = "";
 	}
 
-	override void put(scope const(char)[] text) @safe { 
-		this.line ~= text; 
+	override void put(scope const(char)[] text) @safe {
+		this.line ~= text;
 	}
 
 	private const(char)* priorityString() @safe {
@@ -57,14 +57,14 @@ class JournaldLogger : Logger {
 		return format("PRIORITY=%d", value).toStringz();
 	}
 
-	override void endLine() { 
+	override void endLine() {
 		() @trusted {
 			sd_journal_send(
 					format("MESSAGE=%s", this.line).toStringz(),
 					priorityString(),
-					format("CODE_FILE=%s", this.ll.file).toStringz, 
-					format("CODE_LINE=%s", this.ll.line).toStringz, 
-					format("CODE_FUNC=%s", this.ll.func).toStringz, 
+					format("CODE_FILE=%s", this.ll.file).toStringz,
+					format("CODE_LINE=%s", this.ll.line).toStringz,
+					format("CODE_FUNC=%s", this.ll.func).toStringz,
 					null);
 		}();
 	}

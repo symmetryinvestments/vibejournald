@@ -10,6 +10,19 @@ class JournaldLogger : Logger {
 
 	LogLine ll;
 	string line;
+	const(char)* msg;
+	const(char)* codeFile;
+	const(char)* codeLine;
+	const(char)* codeFunc;
+	const(char)* priority;
+
+	this() {
+		this.msg = "MESSAGE=%s".toStringz();
+		this.codeFile = "CODE_FILE=%s".toStringz();
+		this.codeLine = "CODE_LINE=%d".toStringz();
+		this.codeFunc = "CODE_FUNC=%s".toStringz();
+		this.priority = "PRIORITY=%d".toStringz();
+	}
 
 	override void beginLine(ref LogLine ll) @safe {
 		this.ll = ll;
@@ -20,51 +33,39 @@ class JournaldLogger : Logger {
 		this.line ~= text;
 	}
 
-	private const(char)* priorityString() @safe {
-		int value;
+	private int priorityValue() @safe {
 		final switch(this.ll.level) {
 			case LogLevel.critical:
-				value = 2;
-				break;
+				return 2;
 			case LogLevel.debug_:
-				value = 7;
-				break;
+				return 7;
 			case LogLevel.debugV:
-				value = 7;
-				break;
+				return 7;
 			case LogLevel.diagnostic:
-				value = 5;
-				break;
+				return 5;
 			case LogLevel.error:
-				value = 3;
-				break;
+				return 3;
 			case LogLevel.fatal:
-				value = 0;
-				break;
+				return 0;
 			case LogLevel.info:
-				value = 6;
-				break;
+				return 6;
 			case LogLevel.none:
-				value = 7;
-				break;
+				return 7;
 			case LogLevel.trace:
-				value = 7;
-				break;
+				return 7;
 			case LogLevel.warn:
-				value = 4;
-				break;
+				return 4;
 		}
-		return format("PRIORITY=%d", value).toStringz();
 	}
 
 	override void endLine() {
 		() @trusted {
 			sd_journal_send(
-					format("MESSAGE=%s", this.line).toStringz(),
-					priorityString(),
-					format("CODE_FILE=%s", this.ll.file).toStringz,
-					format("CODE_LINE=%s", this.ll.line).toStringz,
-					format("CODE_FUNC=%s", this.ll.func).toStringz,
+					this.msg, this.line.toStringz(),
+					this.priority, this.priorityValue(),
+					this.codeFile, this.ll.file.toStringz(),
+					this.codeLine, this.ll.line,
+					this.codeFunc, this.ll.func.toStringz(),
 					null);
 		}();
 	}

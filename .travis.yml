@@ -5,6 +5,9 @@ d:
   - dmd
   - ldc
 
+before_install:
+  - sudo apt-get -y install libsystemd-dev
+
 script:
   - dub test --compiler=${DC}
 

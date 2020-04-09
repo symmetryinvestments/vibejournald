@@ -6,7 +6,7 @@
 	"description": "A vibe.d logger that logs into systemd's journald",
 	"license": "LGPL3",
 	"name": "vibejournald",
-	"lflags": ["/usr/lib/libsystemd.so"],
+	"lflags-posix" : ["-lsystemd"],
 	"dependencies": {
 		"vibe-d": "~>0.8.2"
 	}

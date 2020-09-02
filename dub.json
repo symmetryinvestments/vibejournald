@@ -8,6 +8,6 @@
 	"name": "vibejournald",
 	"lflags-posix" : ["-lsystemd"],
 	"dependencies": {
-		"vibe-d": "~>0.8.2"
+		"vibe-d": ">=0.8.2"
 	}
 }
